@@ -54,7 +54,8 @@ public class MicrometerMetricsCaptorRegistrar implements ImportBeanDefinitionReg
 
 			registry.registerBeanDefinition(MicrometerMetricsCaptor.MICROMETER_CAPTOR_NAME,
 					BeanDefinitionBuilder.genericBeanDefinition(MicrometerMetricsCaptor.class,
-							() -> new MicrometerMetricsCaptor(beanFactory.getBeanProvider(MeterRegistry.class)))
+									() -> new MicrometerMetricsCaptor(beanFactory.getBeanProvider(MeterRegistry.class)))
+							.addConstructorArgValue(beanFactory.getBeanProvider(MeterRegistry.class))
 							.setRole(BeanDefinition.ROLE_INFRASTRUCTURE)
 							.getBeanDefinition());
 		}
