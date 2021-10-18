@@ -83,17 +83,17 @@ public class IntegrationGraphControllerRegistrar implements ImportBeanDefinition
 		}
 
 		if (!registry.containsBeanDefinition(HttpContextUtils.GRAPH_CONTROLLER_BEAN_NAME)) {
-			registerIntegrationGraphController(registry, annotationAttributes);
+			registerIntegrationGraphController(registry, (String) annotationAttributes.get(AnnotationUtils.VALUE));
 		}
 	}
 
 	private static void registerIntegrationGraphController(BeanDefinitionRegistry registry,
-			Map<String, Object> properties) {
+			String graphControllerPath) {
 
 		AbstractBeanDefinition controllerPropertiesPopulator =
 				BeanDefinitionBuilder.genericBeanDefinition(GraphControllerPropertiesPopulator.class,
-								() -> new GraphControllerPropertiesPopulator(properties))
-						.addConstructorArgValue(properties)
+								() -> new GraphControllerPropertiesPopulator(graphControllerPath))
+						.addConstructorArgValue(graphControllerPath)
 						.setRole(BeanDefinition.ROLE_INFRASTRUCTURE)
 						.getBeanDefinition();
 		BeanDefinitionReaderUtils.registerWithGeneratedName(controllerPropertiesPopulator, registry);
@@ -147,13 +147,12 @@ public class IntegrationGraphControllerRegistrar implements ImportBeanDefinition
 				.getBeanDefinition();
 	}
 
-	private static final class GraphControllerPropertiesPopulator
+	static final class GraphControllerPropertiesPopulator
 			implements BeanFactoryPostProcessor, EnvironmentAware {
 
 		private final Map<String, Object> properties = new HashMap<>();
 
-		private GraphControllerPropertiesPopulator(Map<String, Object> annotationAttributes) {
-			Object graphControllerPath = annotationAttributes.get(AnnotationUtils.VALUE);
+		GraphControllerPropertiesPopulator(String graphControllerPath) {
 			this.properties.put(HttpContextUtils.GRAPH_CONTROLLER_PATH_PROPERTY, graphControllerPath);
 		}
 
