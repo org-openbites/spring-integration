@@ -67,6 +67,10 @@ public class JdbcLockRegistry implements ExpirableLockRegistry, RenewableLockReg
 
 	private Duration idleBetweenTries = Duration.ofMillis(DEFAULT_IDLE);
 
+	/**
+	 * Construct an instance based on the provided {@link LockRepository}.
+	 * @param client the {@link LockRepository} to rely on.
+	 */
 	public JdbcLockRegistry(LockRepository client) {
 		this.client = client;
 	}
