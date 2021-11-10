@@ -108,6 +108,7 @@ ext {
 	tomcatVersion = '9.0.52'
 	xmlUnitVersion = '2.8.2'
 	xstreamVersion = '1.4.17'
+	googleCloudVersion = '24.0.0'
 
 	javaProjects = subprojects - project(':spring-integration-bom')
 }
@@ -321,6 +322,10 @@ configure(javaProjects) { subproject ->
 		if (System.properties['sonar.host.url']) {
 			finalizedBy jacocoTestReport
 		}
+
+		if (!System.getenv('GCS_BUCKET_NAME_FOR_GCS_LOCK_IT')) {
+			exclude '**/GcsLockRegistryIntegrationTests.class'
+		}
 	}
 
 	task testAll(type: Test, dependsOn: [':checkAsciidocLinks', 'check'])
@@ -507,6 +512,19 @@ project('spring-integration-ftp') {
 
 		testImplementation project(':spring-integration-file').sourceSets.test.output
 		testImplementation "org.hamcrest:hamcrest-core:$hamcrestVersion"
+	}
+}
+
+project('spring-integration-gcs') {
+	description = 'Spring Integration GCS Support'
+	dependencies {
+		api project(':spring-integration-core')
+
+		implementation platform("com.google.cloud:libraries-bom:$googleCloudVersion")
+		implementation "com.google.cloud:google-cloud-storage"
+
+		testImplementation project(':spring-integration-gcs')
+		testImplementation "org.mockito:mockito-inline:$mockitoVersion"
 	}
 }
 
